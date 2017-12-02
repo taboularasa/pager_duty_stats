@@ -4,6 +4,7 @@ require "time"
 require "dotenv/load"
 require "net/http"
 require "openssl"
+require "csv"
 
 class SupportParser
   def self.download_json(api_key, team_id, start_date, end_date)
@@ -43,6 +44,23 @@ class SupportParser
         "ended" => incident["last_status_change_at"],
         "duration_in_minutes" => duration_in_minutes.floor,
       }
+    end
+  end
+
+  def self.to_csv(extracted)
+    CSV.open("./tmp/file.csv", "wb") do |csv|
+      extracted.each do |incident|
+        csv << [
+          "Any",
+          incident["title"],
+          "",
+          incident["started"],
+          incident["ended"],
+          "Yes",
+          incident["duration_in_minutes"],
+          "?"
+        ]
+      end
     end
   end
 end

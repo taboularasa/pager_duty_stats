@@ -20,8 +20,8 @@ RSpec.describe SupportParser do
           "Host"=>"api.pagerduty.com", "User-Agent"=>"Ruby"
         }
       ).to_return(status: 200, body: "{\"foo\":\"bar\"}", headers: {})
-
     end
+
     it "makes a request to PagerDuty API and returns JSON parsed into a hash" do
       expected_hash = { "foo" => "bar" }
       expect(SupportParser.download_json(api_key, team_id, start_date, end_date))
@@ -68,6 +68,26 @@ RSpec.describe SupportParser do
       ]
 
       expect(SupportParser.extract_incidents(given)).to eq(expected)
+    end
+  end
+
+  describe "to_csv" do
+    it "accepts incident hashes and prints a csv without header" do
+      given = [
+        {
+          "incident_key" => "an incident thats been resolved",
+          "title" => "an incident thats been resolved",
+          "started" => "2017-11-27T16:21:37Z",
+          "ended" => "2017-11-27T16:55:48Z",
+          "duration_in_minutes" => 34
+        }
+      ]
+
+      expect { SupportParser.to_csv(given) }
+        .to change { Dir.glob(File.join("./tmp", "*.csv")).length }.by(1)
+
+      expect(FileUtils.compare_file("./tmp/file.csv", "./spec/expected.csv"))
+        .to eq(true)
     end
   end
 end
