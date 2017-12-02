@@ -46,7 +46,7 @@ class SupportParser
       res = http.request(req)
       results = JSON.parse(res.body)
       puts "got page number #{offset / 25}"
-      merged_results["incidents"].push *results["incidents"]
+      merged_results["incidents"].push(*results["incidents"])
       offset += 25
       more = results["more"]
     end
@@ -69,11 +69,11 @@ class SupportParser
       end_time = Time.parse(incident["created_at"])
       duration_in_minutes = (start_time - end_time) / 60
       {
-        "incident_key" => incident["incident_key"],
         "title" => incident["title"],
         "started" => incident["created_at"],
         "ended" => incident["last_status_change_at"],
         "duration_in_minutes" => duration_in_minutes.floor,
+        "id" => incident["id"]
       }
     end
   end
@@ -90,7 +90,7 @@ class SupportParser
           "Yes",
           incident["duration_in_minutes"],
           "?",
-          incident["incident_key"],
+          incident["id"]
         ]
       end
     end

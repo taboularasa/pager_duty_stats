@@ -43,14 +43,14 @@ RSpec.describe SupportParser do
           {
             "created_at" => "2017-11-27T16:21:37Z",
             "status" => "resolved",
-            "incident_key" => "an incident thats been resolved",
+            "id" => "idoftheincident",
             "title" => "an incident thats been resolved",
             "last_status_change_at" => "2017-11-27T16:55:48Z",
           },
           {
             "created_at" => "2017-11-27T16:21:37Z",
             "status" => "triggered",
-            "incident_key" => "an incident thats still triggered",
+            "id" => "idoftheincident",
             "title" => "an incident thats still triggered",
             "last_status_change_at" => "2017-11-27T16:55:48Z",
           },
@@ -59,11 +59,11 @@ RSpec.describe SupportParser do
 
       expected = [
         {
-          "incident_key" => "an incident thats been resolved",
           "title" => "an incident thats been resolved",
           "started" => "2017-11-27T16:21:37Z",
           "ended" => "2017-11-27T16:55:48Z",
-          "duration_in_minutes" => 34
+          "duration_in_minutes" => 34,
+          "id" => "idoftheincident"
         }
       ]
 
@@ -75,11 +75,11 @@ RSpec.describe SupportParser do
     it "accepts incident hashes and prints a csv without header" do
       given = [
         {
-          "incident_key" => "an incident thats been resolved",
           "title" => "an incident thats been resolved",
           "started" => "2017-11-27T16:21:37Z",
           "ended" => "2017-11-27T16:55:48Z",
-          "duration_in_minutes" => 34
+          "duration_in_minutes" => 34,
+          "id" => "idoftheincident"
         }
       ]
 

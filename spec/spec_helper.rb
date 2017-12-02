@@ -32,6 +32,10 @@ RSpec.configure do |config|
 
   Kernel.srand config.seed
 
+  config.before(:each) do
+    FileUtils.rm_rf(Dir.glob("./tmp/*"))
+  end
+
   config.after(:each) do
     FileUtils.rm_rf(Dir.glob("./tmp/*"))
   end
