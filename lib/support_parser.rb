@@ -58,7 +58,8 @@ class SupportParser
           incident["ended"],
           "Yes",
           incident["duration_in_minutes"],
-          "?"
+          "?",
+          incident["incident_key"],
         ]
       end
     end
