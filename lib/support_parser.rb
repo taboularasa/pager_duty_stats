@@ -18,9 +18,40 @@ class SupportParser
     req.add_field "Authorization", "Token token=#{api_key}"
     req.add_field "Accept", "application/vnd.pagerduty+json;version=2"
 
-    # Fetch Request
     res = http.request(req)
     JSON.parse(res.body)
+
+  rescue StandardError => e
+    puts "HTTP Request failed (#{e.message})"
+  end
+
+  def self.download_all_json(api_key, team_id)
+    merged_results = {
+      "incidents" => []
+    }
+    more = true
+    offset = 0
+
+    while more
+      uri = URI("https://api.pagerduty.com/incidents?date_range=all&&offset=#{offset}&statuses%5B%5D=resolved&team_ids%5B%5D=#{team_id}&time_zone=UTC")
+
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.use_ssl = true
+      http.verify_mode = OpenSSL::SSL::VERIFY_PEER
+
+      req =  Net::HTTP::Get.new(uri)
+      req.add_field "Authorization", "Token token=#{api_key}"
+      req.add_field "Accept", "application/vnd.pagerduty+json;version=2"
+
+      res = http.request(req)
+      results = JSON.parse(res.body)
+      puts "got page number #{offset / 25}"
+      merged_results["incidents"].push *results["incidents"]
+      offset += 25
+      more = results["more"]
+    end
+
+    merged_results
 
   rescue StandardError => e
     puts "HTTP Request failed (#{e.message})"
